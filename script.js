@@ -1,254 +1,147 @@
-// Elements
-const form = document.getElementById("scholarshipForm");
-const steps = document.querySelectorAll(".step");
-const stepLabel = document.getElementById("stepLabel");
-const progressFill = document.getElementById("progressFill");
-const formMessage = document.getElementById("formMessage");
-const personalizationScoreEl = document.getElementById("personalizationScore");
-const analysisStatus = document.getElementById("analysisStatus");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Win-Win Challenge</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
 
-// Inputs
-const fullName = document.getElementById("fullName");
-const email = document.getElementById("email");
-const company = document.getElementById("company");
-const role = document.getElementById("role");
-const focusHidden = document.getElementById("focus");
-const teamSize = document.getElementById("teamSize");
-const bottleneck = document.getElementById("bottleneck");
-const tools = document.getElementById("tools");
-const vision = document.getElementById("vision");
-const timeline = document.getElementById("timeline");
-const consent = document.getElementById("consent");
+<body>
+  <div class="shell">
+    <div class="app-card">
+      <header class="app-header">
+        <div class="logo-mark">CTW</div>
+        <div>
+          <h1>Win-Win Challenge</h1>
+          <p class="subtitle">
+            For building-trade companies with 30+ employees. Quick intake to schedule discovery.
+          </p>
+        </div>
+      </header>
 
-// Preview fields
-const prevName = document.getElementById("prevName");
-const prevEmail = document.getElementById("prevEmail");
-const prevCompany = document.getElementById("prevCompany");
-const prevRole = document.getElementById("prevRole");
-const prevFocus = document.getElementById("prevFocus");
-const prevTeamSize = document.getElementById("prevTeamSize");
-const prevBottleneck = document.getElementById("prevBottleneck");
-const prevVision = document.getElementById("prevVision");
-const prevTimeline = document.getElementById("prevTimeline");
+      <section class="meta-bar">
+        <div class="progress-wrapper">
+          <div class="step-label">Accept the challenge</div>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="insight-chip">
+          Form completion: <span id="personalizationScore">0%</span>
+        </div>
+      </section>
 
-// Navigation buttons
-document.getElementById("next1").addEventListener("click", () => {
-  if (!validateStep1()) return;
-  goToStep(2);
-});
+      <div class="layout">
+        <!-- LEFT: FORM -->
+        <main class="form-column">
+          <form id="challengeForm" novalidate>
+            <h2>Company basics</h2>
 
-document.getElementById("back2").addEventListener("click", () => {
-  goToStep(1);
-});
+            <label for="companyName">Company name *</label>
+            <input type="text" id="companyName" autocomplete="organization" placeholder="ABC Electric" />
 
-document.getElementById("next2").addEventListener("click", () => {
-  if (!validateStep2()) return;
-  goToStep(3);
-});
+            <label for="contactName">Contact name *</label>
+            <input type="text" id="contactName" autocomplete="name" placeholder="First + last name" />
 
-document.getElementById("back3").addEventListener("click", () => {
-  goToStep(2);
-});
+            <label for="email">Work email *</label>
+            <input type="email" id="email" autocomplete="email" placeholder="name@company.com" />
 
-// Focus tiles
-const focusTiles = document.querySelectorAll("#focusGroup .tile");
-focusTiles.forEach((tile) => {
-  tile.addEventListener("click", () => {
-    focusTiles.forEach((t) => t.classList.remove("selected"));
-    tile.classList.add("selected");
-    focusHidden.value = tile.dataset.value || "";
-    updatePreview();
-    updatePersonalization();
-  });
-});
+            <label for="phone">Phone *</label>
+            <input type="tel" id="phone" autocomplete="tel" placeholder="(###) ###-####" />
 
-// Form submit
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  clearMessage();
+            <label>Trade type *</label>
+            <div class="focus-tiles" id="tradeGroup" aria-label="Trade type">
+              <button type="button" class="tile" data-value="Electrical">Electrical</button>
+              <button type="button" class="tile" data-value="Mechanical">Mechanical</button>
+              <button type="button" class="tile" data-value="Plumbing">Plumbing</button>
+              <button type="button" class="tile" data-value="HVAC">HVAC</button>
+              <button type="button" class="tile" data-value="General Contractor">General Contractor</button>
+              <button type="button" class="tile" data-value="Civil / Heavy">Civil / Heavy</button>
+              <button type="button" class="tile" data-value="Other">Other</button>
+            </div>
+            <input type="hidden" id="tradeType" />
 
-  if (!validateStep3()) return;
+            <label for="employeeCount">Employee count *</label>
+            <select id="employeeCount">
+              <option value="">Choose one</option>
+              <option value="1–10">1–10</option>
+              <option value="11–30">11–30</option>
+              <option value="31–75">31–75</option>
+              <option value="76–150">76–150</option>
+              <option value="151+">151+</option>
+            </select>
 
-  updatePreview();
-  updatePersonalization();
+            <h2 style="margin-top:16px;">Why this challenge likely fits (optional)</h2>
+            <label class="consent-label">
+              <input type="checkbox" id="qRepeatable" />
+              We run jobs or processes the same way each time
+            </label>
+            <label class="consent-label">
+              <input type="checkbox" id="qScale" />
+              We’re actively trying to grow or scale operations
+            </label>
+            <label class="consent-label">
+              <input type="checkbox" id="qAdmin" />
+              Recurring admin work eats time every week
+            </label>
+            <label class="consent-label">
+              <input type="checkbox" id="qMicrosoft" />
+              We already use Microsoft tools (Excel / Outlook / Teams / SharePoint)
+            </label>
 
-  analysisStatus.textContent = "Analyzing your answers…";
-  formMessage.className = "form-message";
-  formMessage.textContent = "";
+            <label for="notes">Notes (optional)</label>
+            <textarea id="notes" rows="2" placeholder="Any context we should know (optional)"></textarea>
 
-  setTimeout(() => {
-    analysisStatus.textContent = "Analysis ready – this looks like a strong candidate for meaningful workflow upgrades.";
-    formMessage.className = "form-message success";
-    formMessage.textContent =
-      "Thank you. Your application has been captured. If selected, we’ll follow up with next steps and deeper questions.";
-  }, 650);
-});
+            <div class="nav-buttons">
+              <button type="submit" class="btn primary" id="submitBtn">Accept the challenge</button>
+            </div>
 
-// State
-let currentStep = 1;
-const totalSteps = steps.length;
+            <div style="margin-top:10px; font-size:0.8rem; color:#6b7280;">
+              <strong>Win-Win Guarantee:</strong> If CTW cannot identify a meaningful automation opportunity after discovery,
+              CTW will send <strong>$1,000</strong> to the company or the individual contact who accepted the challenge.
+            </div>
+          </form>
 
-// Step logic
-function goToStep(step) {
-  currentStep = step;
+          <div id="formMessage" class="form-message" aria-live="polite"></div>
+        </main>
 
-  steps.forEach((s) => {
-    const index = Number(s.dataset.step);
-    s.classList.toggle("active", index === currentStep);
-  });
+        <!-- RIGHT: PREVIEW -->
+        <aside class="preview-column">
+          <div class="preview-card">
+            <h3>Challenge summary</h3>
+            <p class="preview-subtitle">
+              Quick recap of what you entered. This is for your review.
+            </p>
 
-  const labels = {
-    1: "Step 1 of 3 · About you",
-    2: "Step 2 of 3 · Your operation",
-    3: "Step 3 of 3 · What “better” looks like",
-  };
-  stepLabel.textContent = labels[currentStep] || "";
+            <div class="preview-section">
+              <h4>Basics</h4>
+              <p><span class="label">Company</span> <span id="prevCompany" class="value-muted">Add company name</span></p>
+              <p><span class="label">Contact</span> <span id="prevContact" class="value-muted">Add contact name</span></p>
+              <p><span class="label">Email</span> <span id="prevEmail" class="value-muted">Add work email</span></p>
+              <p><span class="label">Phone</span> <span id="prevPhone" class="value-muted">Add phone</span></p>
+              <p><span class="label">Trade</span> <span id="prevTrade" class="value-muted">Choose trade type</span></p>
+              <p><span class="label">Employees</span> <span id="prevEmployees" class="value-muted">Choose employee count</span></p>
+            </div>
 
-  progressFill.style.width = `${(currentStep / totalSteps) * 100}%`;
+            <div class="preview-section">
+              <h4>Signals</h4>
+              <p><span class="label">Fit</span> <span id="prevQualifiers" class="value-muted">Optional</span></p>
+              <p><span class="label">Notes</span> <span id="prevNotes" class="value-muted">Optional</span></p>
+            </div>
 
-  updatePreview();
-  updatePersonalization();
-  clearMessage();
-}
+            <div class="preview-footer">
+              <div class="pill" id="analysisStatus">Add employee count to continue…</div>
+              <small class="footnote">
+                Offer eligibility is based on employee count (30+). Other selections are used for internal context only.
+              </small>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
 
-// Validation
-function validateStep1() {
-  clearMessage();
-  if (!fullName.value.trim() || !email.value.trim()) {
-    showError("Please add at least your name and a valid email.");
-    return false;
-  }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim())) {
-    showError("That email doesn’t look quite right yet.");
-    return false;
-  }
-  return true;
-}
-
-function validateStep2() {
-  clearMessage();
-  if (!focusHidden.value.trim()) {
-    showError("Pick the area you spend most of your time in.");
-    return false;
-  }
-  if (!bottleneck.value.trim()) {
-    showError("Tell us about the main bottleneck in your day-to-day workflow.");
-    return false;
-  }
-  return true;
-}
-
-function validateStep3() {
-  clearMessage();
-  if (!vision.value.trim()) {
-    showError("Share what “better” looks like in 3–6 sentences or less.");
-    return false;
-  }
-  if (!consent.checked) {
-    showError("Please confirm you’re comfortable being contacted about this application.");
-    return false;
-  }
-  return true;
-}
-
-// Messaging
-function showError(msg) {
-  formMessage.className = "form-message error";
-  formMessage.textContent = msg;
-}
-
-function clearMessage() {
-  formMessage.className = "form-message";
-  formMessage.textContent = "";
-}
-
-// Preview + personalization
-function updatePreview() {
-  const trim = (x) => x.value.trim();
-
-  prevName.textContent = trim(fullName) || "Add your name";
-  prevName.classList.toggle("value-muted", !trim(fullName));
-
-  prevEmail.textContent = trim(email) || "Add your email";
-  prevEmail.classList.toggle("value-muted", !trim(email));
-
-  prevCompany.textContent = trim(company) || "Optional";
-  prevCompany.classList.toggle("value-muted", !trim(company));
-
-  prevRole.textContent = trim(role) || "Optional";
-  prevRole.classList.toggle("value-muted", !trim(role));
-
-  prevFocus.textContent = focusHidden.value || "Choose a focus area";
-  prevFocus.classList.toggle("value-muted", !focusHidden.value);
-
-  prevTeamSize.textContent = teamSize.value || "Optional";
-  prevTeamSize.classList.toggle("value-muted", !teamSize.value);
-
-  prevBottleneck.textContent =
-    trim(bottleneck) || "Describe your main friction";
-  prevBottleneck.classList.toggle("value-muted", !trim(bottleneck));
-
-  prevVision.textContent =
-    trim(vision) || "Tell us what “better” looks like";
-  prevVision.classList.toggle("value-muted", !trim(vision));
-
-  prevTimeline.textContent = timeline.value || "Optional";
-  prevTimeline.classList.toggle("value-muted", !timeline.value);
-
-  // Lightly react to detail level
-  if (bottleneck.value.trim().length > 120 && vision.value.trim().length > 150) {
-    analysisStatus.textContent =
-      "Great detail – this level of clarity makes it much easier to design the right system.";
-  } else if (bottleneck.value.trim() || vision.value.trim()) {
-    analysisStatus.textContent =
-      "Good start – a bit more detail helps us estimate impact and ROI.";
-  } else {
-    analysisStatus.textContent = "Waiting for details…";
-  }
-}
-
-function updatePersonalization() {
-  const fields = [
-    fullName,
-    email,
-    bottleneck,
-    vision,
-    focusHidden,
-    company,
-    role,
-    teamSize,
-    tools,
-    timeline,
-  ];
-
-  let filled = 0;
-  fields.forEach((f) => {
-    if (!f) return;
-    const val = f.type === "hidden" ? f.value : f.value.trim();
-    if (val) filled++;
-  });
-
-  const score = Math.round((filled / fields.length) * 100);
-  personalizationScoreEl.textContent = `${score}%`;
-}
-
-// Initialize
-goToStep(1);
-
-// Live updates on input
-[
-  fullName,
-  email,
-  company,
-  role,
-  teamSize,
-  bottleneck,
-  tools,
-  vision,
-  timeline,
-].forEach((el) => {
-  el.addEventListener("input", () => {
-    updatePreview();
-    updatePersonalization();
-  });
-});
+  <script src="script.js?v=2"></script>
+</body>
+</html>
