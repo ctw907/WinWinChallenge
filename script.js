@@ -102,7 +102,7 @@ form.addEventListener("submit", async (e) => {
 
   // Hard qualifier: > 30 employees
   if (v.employeeCount <= 30) {
-    setMessage("This challenge is currently limited to building-trade companies with more than 30 employees.", "error");
+    setMessage("This challenge is currently limited to contractor companies with more than 30 employees.", "error");
     return;
   }
 
